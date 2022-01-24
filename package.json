@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon ./src/index.js"
+    "dev": "nodemon ./src/index.js",
+    "factory": "node ./src/HouseFactory.js"
   },
   "type": "module",
   "dependencies": {
@@ -15,5 +16,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.5",
     "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "faker": "5.3"
   }
 }
