@@ -1,5 +1,6 @@
 import express from "express";
 import House from "../models/House/index.js";
+
 const router = express.Router();
 
 router.route("/api/v1/house").get(async (req, res) => {
@@ -11,6 +12,7 @@ router.route("/api/v1/house").get(async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 router.route("/api/v1/house/create").post(async (req, res) => {
   const newHouse = new House(req.body);
   try {
@@ -20,6 +22,7 @@ router.route("/api/v1/house/create").post(async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 router.route("/api/v1/house/:id").get(async (req, res) => {
   const house = await House.findById(req.params.id);
   res.status(200).json(house);
@@ -43,6 +46,7 @@ router.route("/api/v1/house/:id").put(async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 router.route("/api/v1/house/:id").delete(async (req, res) => {
   const HouseId = req.params.id;
   try {
