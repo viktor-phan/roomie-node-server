@@ -1,8 +1,26 @@
 import express from "express";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import User from "../models/User/index.js";
+import { hashPassword } from "../helpers/bcrypt.helper.js";
+import { verifyToken } from "../middleware/authentication.js";
 
 const router = express.Router();
+// Register -- HINT: always an admin with admin pasword
+router.route("/api/v1/user").post(async (req, res) => {
+  const newUser = new User(req.body);
+  try {
+    const passwordHash = await hashPassword(newUser.password);
+    newUser.password = passwordHash;
+    const savedUser = await newUser.save();
+    const { password, ...info } = savedUser._doc;
+    res.status(200).json(info);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
+// Find user by user name
 router.route("/api/v1/user").get(async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
@@ -16,16 +34,7 @@ router.route("/api/v1/user").get(async (req, res) => {
   }
 });
 
-router.route("/api/v1/user").post(async (req, res) => {
-  const newUser = new User(req.body);
-  try {
-    const savedUser = await newUser.save();
-    res.status(200).json(savedUser);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
-
+// Find user by id
 router.route("/api/v1/user/:id").get(async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -39,26 +48,29 @@ router.route("/api/v1/user/:id").get(async (req, res) => {
   }
 });
 
+// Edit user
 router.route("/api/v1/user/edit").put(async (req, res) => {
   try {
     const user = await _findUserByUsername(req.body.username);
     if (!user) {
       res.status(404).json({ message: "User not found!" });
     } else {
-      console.log(user);
       const updateUser = await User.findOneAndUpdate(
         user,
         { $set: req.body },
         { new: true }
       );
-      res.status(200).json(updateUser);
+
+      const { password, ...info } = updateUser._doc;
+      res.status(200).json(info);
     }
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.route("/api/v1/user/delete").delete(async (req, res) => {
+// Delete User
+router.route("/api/v1/user/delete").delete(verifyToken, async (req, res) => {
   try {
     const user = await _findUserByUsername(req.body.username);
     if (!user) {

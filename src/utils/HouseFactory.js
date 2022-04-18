@@ -1,7 +1,7 @@
 import faker from "faker";
 
-import House from "./models/House/index.js";
-import connectDatabase from "./database/index.js";
+import House from "../models/House/index.js";
+import connectDatabase from "../database/index.js";
 
 const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min);
