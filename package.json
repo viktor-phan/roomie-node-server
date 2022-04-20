@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon ./src/index.js",
-    "factory": "node ./src/utils/HouseFactory.js"
+    "factory": "node ./src/utils/HouseFactory.js",
+    "routes": "node ./src/utils/endpoints.js"
   },
   "type": "module",
   "dependencies": {

@@ -18,4 +18,3 @@ app.listen(port, async () => {
   await connectDatabase();
   console.log(`Server running at port ${port} localhost!`);
 });
-console.log(listEndpoints(app));
