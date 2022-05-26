@@ -2,8 +2,10 @@ import express from "express";
 
 const router = express.Router();
 
-router.route("/api/example/").get((req, res) => {
-  res.json({ message: "This is an example Get route" });
+router.route("/").get((req, res) => {
+  req.session.auth = true;
+  console.log(req.session.id);
+  res.json({ message: "Welcome to Roomie API" });
 });
 
 export default router;

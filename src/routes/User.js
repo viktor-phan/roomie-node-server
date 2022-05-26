@@ -1,14 +1,21 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import User from "../models/User/index.js";
 import { hashPassword } from "../helpers/bcrypt.helper.js";
-import { verifyToken } from "../middleware/authentication.js";
+import { isAuth } from "../middleware/authentication.js";
 
 const router = express.Router();
+
 // Register -- HINT: always an admin with admin pasword
-router.route("/api/v1/user").post(async (req, res) => {
+router.route("/api/v1/register").post(async (req, res) => {
+  const user = await _findUserByUsername(req.body.username);
+  console.log(user);
+
+  if (user) {
+    res.status(409).json({ message: "User Existed!" });
+  }
+
   const newUser = new User(req.body);
+
   try {
     const passwordHash = await hashPassword(newUser.password);
     newUser.password = passwordHash;
@@ -51,7 +58,8 @@ router.route("/api/v1/user/:id").get(async (req, res) => {
 // Edit user
 router.route("/api/v1/user/edit").put(async (req, res) => {
   try {
-    const user = await _findUserByUsername(req.body.username);
+    const user = await User.findOne({ username: req.body.username });
+    
     if (!user) {
       res.status(404).json({ message: "User not found!" });
     } else {
@@ -70,9 +78,9 @@ router.route("/api/v1/user/edit").put(async (req, res) => {
 });
 
 // Delete User
-router.route("/api/v1/user/delete").delete(verifyToken, async (req, res) => {
+router.route("/api/v1/user/delete").delete(isAuth, async (req, res) => {
   try {
-    const user = await _findUserByUsername(req.body.username);
+    const user = await User.findOne({ username: req.body.username });
     if (!user) {
       res.status(404).json({ message: "User not found!" });
     } else {
@@ -87,9 +95,5 @@ router.route("/api/v1/user/delete").delete(verifyToken, async (req, res) => {
   } catch (error) {}
 });
 
-const _findUserByUsername = async (username) => {
-  const user = await User.findOne({ username: username });
-  return user;
-};
 
 export default router;
