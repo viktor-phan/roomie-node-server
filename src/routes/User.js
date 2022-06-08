@@ -62,6 +62,7 @@ router.route("/api/v1/user/edit").put(async (req, res) => {
       );
 
       const { password, ...info } = updateUser._doc;
+      req.session.user = info;
       res.status(200).json(info);
     }
   } catch (error) {

@@ -13,10 +13,12 @@ router.route("/api/v1/login").post(async (req, res) => {
       res.status(401).json({ message: "Wrong password or username" });
       return;
     }
+
     const validPassword = await comparePasswords(
       req.body.password,
       user.password
     );
+
     if (!validPassword) {
       res.status(401).json({ message: "Wrong password or username" });
       return;
@@ -28,7 +30,7 @@ router.route("/api/v1/login").post(async (req, res) => {
       { expiresIn: "1d" }
     );
     const { password, ...info } = user._doc;
-
+    req.session.user = info;
     res.status(200).json({ accessToken, message: "Logged in successfully" });
   } catch (error) {
     res.status(500).json(error);
